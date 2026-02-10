@@ -189,7 +189,7 @@
             padding: 2px 8px; background: rgba(255, 0, 110, 0.2);
             border-radius: 10px; font-size: 10px; color: #ff006e;
         }
-        .scenes { padding: 100px 50px; }
+        .scenes { padding: 100px 50px; position: relative; z-index: 50; background: var(--dark); }
         .section-title { text-align: center; margin-bottom: 60px; }
         .section-title h2 { font-size: 40px; margin-bottom: 15px; }
         .section-title p { opacity: 0.7; font-size: 16px; }
@@ -226,7 +226,7 @@
             border-radius: 15px; font-size: 11px; color: var(--accent);
         }
         .tag.ready { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
-        .recruitment { padding: 100px 50px; background: rgba(0, 240, 255, 0.02); }
+        .recruitment { padding: 100px 50px; background: rgba(0, 240, 255, 0.02); position: relative; z-index: 50; }
         .jobs-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px; max-width: 1200px; margin: 0 auto;
@@ -252,7 +252,7 @@
             border-radius: 12px; font-size: 11px; color: var(--primary);
         }
         .job-footer { display: flex; justify-content: space-between; align-items: center; opacity: 0.6; font-size: 12px; }
-        .news-section { padding: 100px 50px; }
+        .news-section { padding: 100px 50px; position: relative; z-index: 50; }
         .news-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px; max-width: 1200px; margin: 0 auto;
@@ -272,7 +272,7 @@
         }
         .news-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; line-height: 1.5; }
         .news-meta { display: flex; gap: 15px; opacity: 0.5; font-size: 12px; }
-        .role-sections { display: none; }
+        .role-sections { display: none; position: absolute; top: 0; left: 0; width: 100%; z-index: 100; }
         .role-sections.active { display: block; }
         footer {
             padding: 60px 50px; text-align: center;
@@ -290,7 +290,7 @@
             .stats { flex-wrap: wrap; gap: 30px; }
             nav { padding: 15px 20px; }
             .nav-links { display: none; }
-            .scenes, .recruitment, .news-section { padding: 80px 20px; }
+            .scenes, .recruitment, .news-section { padding: 80px 20px; position: relative; z-index: 50; }
         }
     </style>
 </head>
