@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能家居 - OpenClaw 场景实验室</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #00f0ff;
+            --green: #00ff88;
+            --gold: #ffd700;
+            --dark: #0a0a0f;
+            --light: #ffffff;
+        }
+        body {
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        .bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%);
+        }
+        nav {
+            position: fixed; top: 0; width: 100%;
+            padding: 15px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        .logo { font-size: 20px; font-weight: bold; color: var(--gold); }
+        .back-btn {
+            padding: 8px 20px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 50px; color: var(--gold);
+            cursor: pointer; text-decoration: none; font-size: 14px;
+        }
+        .hero {
+            min-height: 50vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+        }
+        .scene-icon {
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(102, 126, 234, 0.2));
+            border-radius: 25px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 50px; margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .hero h1 {
+            font-size: 48px; font-weight: 800; margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--gold), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 18px; opacity: 0.8; max-width: 700px; line-height: 1.8; }
+        .metrics { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; justify-content: center; }
+        .metric {
+            text-align: center;
+            padding: 20px 30px;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+        }
+        .metric-value { font-size: 36px; font-weight: bold; color: var(--gold); }
+        .metric-label { font-size: 13px; opacity: 0.7; margin-top: 5px; }
+        .flowchart { padding: 80px 50px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; margin-bottom: 50px; }
+        .section-title h2 { font-size: 36px; margin-bottom: 15px; }
+        .flow-steps { display: flex; flex-direction: column; gap: 0; }
+        .flow-step { display: flex; align-items: flex-start; gap: 30px; padding: 30px; position: relative; }
+        .step-number {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--gold), var(--primary));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold;
+            flex-shrink: 0; z-index: 2;
+        }
+        .step-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; padding: 25px;
+        }
+        .step-title { font-size: 20px; font-weight: 600; color: var(--gold); margin-bottom: 10px; }
+        .step-desc { font-size: 15px; opacity: 0.8; line-height: 1.7; }
+        .step-demo {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+        }
+        .demo-item { text-align: center; padding: 15px; background: rgba(255, 215, 0, 0.1); border-radius: 10px; }
+        .demo-icon { font-size: 30px; margin-bottom: 10px; }
+        .demo-value { font-size: 18px; font-weight: 600; color: var(--gold); }
+        .demo-label { font-size: 12px; opacity: 0.7; margin-top: 5px; }
+        .flow-arrow { text-align: center; font-size: 30px; color: var(--gold); opacity: 0.5; padding: 10px; }
+        .comparison { padding: 80px 50px; background: rgba(255, 215, 0, 0.02); }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1000px; margin: 0 auto; }
+        .compare-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 40px;
+        }
+        .compare-card.before { border-color: #ff6b6b; }
+        .compare-card.after { border-color: var(--green); }
+        .compare-title { font-size: 24px; margin-bottom: 30px; }
+        .compare-card.before .compare-title { color: #ff6b6b; }
+        .compare-card.after .compare-title { color: var(--green); }
+        .compare-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .compare-item:last-child { border-bottom: none; }
+        .compare-label { opacity: 0.7; }
+        .compare-value { font-weight: 600; }
+        .cta { padding: 100px 50px; text-align: center; }
+        .cta h2 { font-size: 40px; margin-bottom: 20px; }
+        .cta p { font-size: 18px; opacity: 0.8; margin-bottom: 40px; }
+        .cta-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            padding: 16px 40px;
+            border-radius: 50px; font-size: 16px; font-weight: 600;
+            text-decoration: none; transition: 0.3s; cursor: pointer; border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--primary));
+            color: var(--dark);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3); }
+        .btn-secondary {
+            background: transparent; border: 2px solid rgba(255, 255, 255, 0.3); color: var(--light);
+        }
+        footer { padding: 40px 50px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.10.5;); opacity:  font-size: 14px; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .metrics { gap: 20px; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .step-demo { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    <nav>
+        <div class="logo">🔬 场景实验室</div>
+        <a href="index.html" class="back-btn">← 返回首页</a>
+    </nav>
+    <section class="hero">
+        <div class="scene-icon">🏠</div>
+        <h1>智能家居中控</h1>
+        <p>全屋智能设备一站式管理，AI 学习生活习惯，自动创建智能场景，让家庭生活更便捷、更舒适、更节能。</p>
+        <div class="metrics">
+            <div class="metric"><div class="metric-value">500%↑</div><div class="metric-label">便利度提升</div></div>
+            <div class="metric"><div class="metric-value">30%↓</div><div class="metric-label">电费节省</div></div>
+            <div class="metric"><div class="metric-value">50+</div><div class="metric-label">设备兼容</div></div>
+            <div class="metric"><div class="metric-value">0</div><div class="metric-label">手动操作</div></div>
+        </div>
+    </section>
+    <section class="flowchart">
+        <div class="section-title"><h2>工作流程</h2><p>从设备连接到场景自动化</p></div>
+        <div class="flow-steps">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">🔌 设备接入</div>
+                    <div class="step-desc">支持 50+ 品牌智能设备，一键配网，自动识别设备类型和功能。</div>
+                    <div class="step-demo">
+                        <div class="demo-item"><div class="demo-icon">💡</div><div class="demo-value">10</div><div class="demo-label">已连灯</div></div>
+                        <div class="demo-item"><div class="demo-icon">🌡️</div><div class="demo-value">3</div><div class="demo-label">空调</div></div>
+                        <div class="demo-item"><div class="demo-icon">🚪</div><div class="demo-value">5</div><div class="demo-label">门锁</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">🧠 学习习惯</div>
+                    <div class="step-desc">AI 观察 7 天，分析起床、离家、回家、睡觉等时间规律，自动创建场景。</div>
+                    <div class="step-demo">
+                        <div class="demo-item"><div class="demo-icon">🌅</div><div class="demo-value">7:00</div><div class="demo-label">起床时间</div></div>
+                        <div class="demo-item"><div class="demo-icon">🏃</div><div class="demo-value">8:30</div><div class="demo-label">离家时间</div></div>
+                        <div class="demo-item"><div class="demo-icon">🏠</div><div class="demo-value">19:00</div><div class="demo-label">回家时间</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">⚡ 场景创建</div>
+                    <div class="step-desc">自动生成起床模式、离家模式、回家模式、睡觉模式等智能场景。</div>
+                    <div class="step-demo">
+                        <div class="demo-item"><div class="demo-icon">🌅</div><div class="demo-value">起床</div><div class="demo-label">窗帘打开 + 咖啡机启动</div></div>
+                        <div class="demo-item"><div class="demo-icon">🏃</div><div class="demo-value">离家</div><div class="demo-label">全关 + 安防启动</div></div>
+                        <div class="demo-item"><div class="demo-icon">🌙</div><div class="demo-value">睡觉</div><div class="demo-label">全暗 + 夜灯开启</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">📱 语音控制</div>
+                    <div class="step-desc">支持语音助手，说出需求即可控制，也可以手机远程操控。</div>
+                    <div class="step-demo">
+                        <div class="demo-item"><div class="demo-icon">🎤</div><div class="demo-value">小爱同学</div><div class="demo-label">语音控制</div></div>
+                        <div class="demo-item"><div class="demo-icon">📱</div><div class="demo-value">App</div><div class="demo-label">远程控制</div></div>
+                        <div class="demo-item"><div class="demo-icon">🤖</div><div class="demo-value">Siri</div><div class="demo-label">快捷指令</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <div class="step-title">📊 持续优化</div>
+                    <div class="step-desc">根据使用数据持续优化，自动调整设备运行策略，节省能源。</div>
+                    <div class="step-demo">
+                        <div class="demo-item"><div class="demo-icon">⚡</div><div class="demo-value">-30%</div><div class="demo-label">电费节省</div></div>
+                        <div class="demo-item"><div class="demo-icon">📈</div><div class="demo-value">+15%</div><div class="demo-label">舒适度</div></div>
+                        <div class="demo-item"><div class="demo-icon">🔒</div><div class="demo-value">100%</div><div class="demo-label">安全感</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="comparison">
+        <div class="section-title"><h2>效果对比</h2><p>智能家居 vs 传统家居</p></div>
+        <div class="comparison-grid">
+            <div class="compare-card before">
+                <div class="compare-title">❌ 传统家居</div>
+                <div class="compare-item"><span class="compare-label">每天手动操作</span><span class="compare-value">50+ 次</span></div>
+                <div class="compare-item"><span class="compare-label">设备协同</span><span class="compare-value" style="color: #ff6b6b;">无法联动</span></div>
+                <div class="compare-item"><span class="compare-label">能耗优化</span><span class="compare-value" style="color: #ff6b6b;">无</span></div>
+                <div class="compare-item"><span class="compare-label">场景体验</span><span class="compare-value" style="color: #ff6b6b;">单一</span></div>
+                <div class="compare-item"><span class="compare-label">安全感</span><span class="compare-value" style="color: #ff6b6b;">普通</span></div>
+            </div>
+            <div class="compare-card after">
+                <div class="compare-title">✅ 智能家居</div>
+                <div class="compare-item"><span class="compare-label">每天手动操作</span><span class="compare-value" style="color: var(--green);">0 次</span></div>
+                <div class="compare-item"><span class="compare-label">设备协同</span><span class="compare-value" style="color: var(--green);">全屋联动</span></div>
+                <div class="compare-item"><span class="compare-label">能耗优化</span><span class="compare-value" style="color: var(--green);">节省 30%</span></div>
+                <div class="compare-item"><span class="compare-label">场景体验</span><span class="compare-value" style="color: var(--green);">10+ 场景</span></div>
+                <div class="compare-item"><span class="compare-label">安全感</span><span class="compare-value" style="color: var(--green);">智能安防</span></div>
+            </div>
+        </div>
+    </section>
+    <section class="cta">
+        <h2>开启智能家居生活</h2>
+        <p>让 AI 管理你的家</p>
+        <div class="cta-buttons">
+            <button class="btn btn-primary">免费试用</button>
+            <button class="btn btn-secondary">了解更多</button>
+        </div>
+    </section>
+    <footer>OpenClaw 中国社区 · 场景实验室 · 家庭场景</footer>
+</body>
+</html>
