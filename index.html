@@ -272,8 +272,8 @@
         }
         .news-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; line-height: 1.5; }
         .news-meta { display: flex; gap: 15px; opacity: 0.5; font-size: 12px; }
-        .role-sections { display: none; position: absolute; top: 0; left: 0; width: 100%; z-index: 100; }
-        .role-sections.active { display: block; }
+        .role-sections { display: none; position: absolute; top: 0; left: 0; width: 100%; z-index: 100; pointer-events: none; }
+        .role-sections.active { display: block; pointer-events: auto; }
         footer {
             padding: 60px 50px; text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
