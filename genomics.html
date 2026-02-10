@@ -6,100 +6,162 @@
     <title>基因分析 - OpenClaw 场景实验室</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root { --primary: #667eea; --secondary: #764ba2; --accent: #ff006e; --green: #00ff88; --gold: #ffd700; --dark: #0a0a0f; --light: #ffffff; }
-        body { font-family: 'SF Pro Display', -apple-system, sans-serif; background: var(--dark); color: var(--light); overflow-x: hidden; }
-        .bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 20%, rgba(255, 0, 110, 0.1) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%); }
-        nav { position: fixed; top: 0; width: 100%; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px); z-index: 1000; border-bottom: 1px solid rgba(255, 0, 110, 0.2); }
-        .logo { font-size: 20px; font-weight: bold; color: var(--accent); }
-        .back-btn { padding: 8px 20px; background: rgba(255, 0, 110, 0.1); border: 1px solid rgba(255, 0, 110, 0.2); border-radius: 50px; color: var(--accent); cursor: pointer; text-decoration: none; font-size: 14px; }
-        .hero { min-height: 50vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 20px 60px; }
-        .scene-icon { width: 100px; height: 100px; background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(102, 126, 234, 0.2)); border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 50px; margin-bottom: 30px; animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .hero h1 { font-size: 48px; font-weight: 800; margin-bottom: 15px; background: linear-gradient(135deg, var(--accent), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 18px; opacity: 0.8; max-width: 700px; line-height: 1.8; }
-        .metrics { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; justify-content: center; }
-        .metric { text-align: center; padding: 20px 30px; background: rgba(255, 0, 110, 0.05); border: 1px solid rgba(255, 0, 110, 0.2); border-radius: 16px; }
-        .metric-value { font-size: 36px; font-weight: bold; color: var(--accent); }
-        .metric-label { font-size: 13px; opacity: 0.7; margin-top: 5px; }
-        .flowchart { padding: 80px 50px; max-width: 1200px; margin: 0 auto; }
-        .section-title { text-align: center; margin-bottom: 50px; }
-        .section-title h2 { font-size: 36px; margin-bottom: 15px; }
-        .flow-steps { display: flex; flex-direction: column; gap: 0; }
-        .flow-step { display: flex; align-items: flex-start; gap: 30px; padding: 30px; position: relative; }
-        .step-number { width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; flex-shrink: 0; z-index: 2; }
-        .step-content { flex: 1; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 25px; }
-        .step-title { font-size: 20px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
-        .step-desc { font-size: 15px; opacity: 0.8; line-height: 1.7; }
-        .step-demo { margin-top: 20px; padding: 20px; background: rgba(0, 0, 0, 0.3); border-radius: 12px; }
-        .demo-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .demo-row:last-child { border-bottom: none; }
-        .demo-label { opacity: 0.7; }
-        .demo-value { font-weight: 600; color: var(--accent); }
-        .demo-value.success { color: var(--green); }
-        .demo-value.warning { color: var(--gold); }
-        .flow-arrow { text-align: center; font-size: 30px; color: var(--accent); opacity: 0.5; padding: 10px; }
-        .comparison { padding: 80px 50px; background: rgba(255, 0, 110, 0.02); }
-        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1000px; margin: 0 auto; }
-        .compare-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 40px; }
-        .compare-card.before { border-color: #ff6b6b; }
-        .compare-card.after { border-color: var(--green); }
-        .compare-title { font-size: 24px; margin-bottom: 30px; }
-        .compare-card.before .compare-title { color: #ff6b6b; }
-        .compare-card.after .compare-title { color: var(--green); }
-        .compare-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .compare-item:last-child { border-bottom: none; }
-        .compare-label { opacity: 0.7; }
-        .compare-value { font-weight: 600; }
-        .cta { padding: 100px 50px; text-align: center; }
-        .cta h2 { font-size: 40px; margin-bottom: 20px; }
-        .cta p { font-size: 18px; opacity: 0.8; margin-bottom: 40px; }
-        .cta-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .btn { padding: 16px 40px; border-radius: 50px; font-size: 16px; font-weight: 600; text-decoration: none; transition: 0.3s; cursor: pointer; border: none; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent), var(--primary)); color: var(--light); }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(255, 0, 110, 0.3); }
-        .btn-secondary { background: transparent; border: 2px solid rgba(255, 255, 255, 0.3); color: var(--light); }
-        footer { padding: 40px 50px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); opacity: 0.5; font-size: 14px; }
-        @media (max-width: 768px) { .hero h1 { font-size: 32px; } .metrics { gap: 20px; } .comparison-grid { grid-template-columns: 1fr; } }
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #00f0ff;
+            --green: #00ff88;
+            --gold: #ffd700;
+            --dark: #0a0a0f;
+            --light: #ffffff;
+        }
+        body {
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        .bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at 20% 20%, #a855f7_OPACITY 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%);
+        }
+        nav {
+            position: fixed; top: 0; width: 100%;
+            padding: 15px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .logo { font-size: 20px; font-weight: bold; cursor: pointer; }
+        .back-btn {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px; color: var(--light);
+            cursor: pointer; text-decoration: none; font-size: 14px;
+            transition: 0.3s;
+        }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.2); }
+        .hero {
+            min-height: 50vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+        }
+        .hero-badge {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .hero h1 { font-size: 48px; margin-bottom: 15px; }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 18px; opacity: 0.8; max-width: 600px; }
+        
+        .content { padding: 50px; max-width: 1200px; margin: 0 auto; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px; padding: 30px;
+            transition: 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .feature-icon { font-size: 36px; margin-bottom: 15px; }
+        .feature-card h3 { margin-bottom: 10px; }
+        .feature-card p { opacity: 0.7; font-size: 14px; line-height: 1.6; }
+        
+        .demo-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; padding: 40px; margin-bottom: 50px;
+        }
+        .demo-section h2 { margin-bottom: 20px; }
+        .chat-demo {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px; padding: 20px;
+            font-family: monospace;
+        }
+        .chat-line { margin-bottom: 10px; padding: 10px; border-radius: 8px; }
+        .chat-user { background: rgba(0, 240, 255, 0.1); margin-left: 20px; }
+        .chat-ai { background: rgba(255, 255, 255, 0.1); margin-right: 20px; }
+        
+        footer {
+            padding: 50px; text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
+        .footer-links a { color: var(--light); text-decoration: none; opacity: 0.6; transition: 0.3s; }
+        .footer-links a:hover { opacity: 1; }
     </style>
 </head>
 <body>
     <div class="bg"></div>
-    <nav><div class="logo">🔬 场景实验室</div><a href="index.html" class="back-btn">← 返回首页</a></nav>
-    <section class="hero"><div class="scene-icon">🧬</div><h1>基因分析</h1><p>AI 解码基因密码，预测疾病风险，提供个性化健康建议，效率提升 1000%。</p>
-        <div class="metrics"><div class="metric"><div class="metric-value">1000%↑</div><div class="metric-label">分析效率</div></div><div class="metric"><div class="metric-value">99.9%</div><div class="metric-label">预测准确率</div></div><div class="metric"><div class="metric-value">2000+</div><div class="metric-label">疾病预测</div></div><div class="metric"><div class="metric-value">3秒</div><div class="metric-label">快速分析</div></div></div>
+    
+    <nav>
+        <div class="logo" onclick="window.location.href='index-spa.html'" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">← OpenClaw</div>
+        <a href="index-spa.html" class="back-btn">返回首页</a>
+    </nav>
+    
+    <section class="hero">
+        <div class="hero-badge">🧬 基因分析</div>
+        <h1>AI 驱动的 <span>基因分析</span></h1>
+        <p>AI 辅助基因解读与预测</p>
     </section>
-    <section class="flowchart">
-        <div class="section-title"><h2>工作流程</h2><p>从基因测序到健康建议</p></div>
-        <div class="flow-steps">
-            <div class="flow-step"><div class="step-number">1</div><div class="step-content"><div class="step-title">🧬 基因测序</div><div class="step-desc">采集样本进行基因测序，获取原始 DNA 数据。</div><div class="step-demo"><div class="demo-row"><span class="demo-label">测序类型</span><span class="demo-value">全基因组测序</span></div><div class="demo-row"><span class="demo-label">数据量</span><span class="demo-value">约 150GB</span></div></div></div></div>
-            <div class="flow-arrow">↓</div>
-            <div class="flow-step"><div class="step-number">2</div><div class="step-content"><div class="step-title">🔍 变异位点识别</div><div class="step-desc">AI 快速识别基因变异位点，与数据库进行比对。</div><div class="step-demo"><div class="demo-row"><span class="demo-label">发现变异</span><span class="demo-value warning">4,500,000+ 位点</span></div><div class="demo-row"><span class="demo-label">分析时间</span><span class="demo-value success">3 秒</span></div></div></div></div>
-            <div class="flow-arrow">↓</div>
-            <div class="flow-step"><div class="step-number">3</div><div class="step-content"><div class="step-title">🏷️ 疾病风险预测</div><div class="step-desc">基于变异位点，预测 2000+ 种疾病风险。</div><div class="step-demo"><div class="demo-row"><span class="demo-label">疾病风险</span><span class="demo-value">糖尿病 高风险</span></div><div class="demo-row"><span class="demo-label">遗传风险</span><span class="demo-value">3 项携带者</span></div></div></div></div>
-            <div class="flow-arrow">↓</div>
-            <div class="flow-step"><div class="step-number">4</div><div class="step-content"><div class="step-title">💊 个性化用药</div><div class="step-desc">根据基因型推荐最佳药物和剂量，避免不良反应。</div><div class="step-demo"><div class="demo-row"><span class="demo-label">药物建议</span><span class="demo-value">12 种药物</span></div><div class="demo-row"><span class="demo-label">剂量优化</span><span class="demo-value success">✓ 已调整</span></div></div></div></div>
-            <div class="flow-arrow">↓</div>
-            <div class="flow-step"><div class="step-number">5</div><div class="step-content"><div class="step-title">📈 报告生成</div><div class="step-desc">生成可视化基因报告，包含风险提示和健康建议。</div><div class="step-demo"><div class="demo-row"><span class="demo-label">报告页数</span><span class="demo-value">50 页</span></div><div class="demo-row"><span class="demo-label">建议数</span><span class="demo-value success">25 条</span></div></div></div></div>
-        </div>
-    </section>
-    <section class="comparison">
-        <div class="section-title"><h2>效果对比</h2><p>AI 基因分析 vs 传统分析</p></div>
-        <div class="comparison-grid">
-            <div class="compare-card before"><div class="compare-title">❌ 传统分析</div>
-                <div class="compare-item"><span class="compare-label">分析时间</span><span class="compare-value">数周</span></div>
-                <div class="compare-item"><span class="compare-label">疾病预测</span><span class="compare-value" style="color: #ff6b6b;">100+ 种</span></div>
-                <div class="compare-item"><span class="compare-label">准确率</span><span class="compare-value" style="color: #ff6b6b;">85%</span></div>
-                <div class="compare-item"><span class="compare-label">费用</span><span class="compare-value" style="color: #ff6b6b;">¥10,000+</span></div>
+    
+    <div class="content">
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>智能分析</h3>
+                <p>AI 深度分析，提供专业洞察和决策支持</p>
             </div>
-            <div class="compare-card after"><div class="compare-title">✅ AI 基因分析</div>
-                <div class="compare-item"><span class="compare-label">分析时间</span><span class="compare-value" style="color: var(--green);">3 秒</span></div>
-                <div class="compare-item"><span class="compare-label">疾病预测</span><span class="compare-value" style="color: var(--green);">2000+ 种</span></div>
-                <div class="compare-item"><span class="compare-label">准确率</span><span class="compare-value" style="color: var(--green);">99.9%</span></div>
-                <div class="compare-item"><span class="compare-label">费用</span><span class="compare-value" style="color: var(--green);">¥999 起</span></div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>快速响应</h3>
+                <p>毫秒级响应，即时获取所需信息</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>精准推荐</h3>
+                <p>个性化推荐，匹配你的独特需求</p>
             </div>
         </div>
-    </section>
-    <section class="cta"><h2>开启基因解读</h2><p>了解你的基因，掌握你的健康</p><div class="cta-buttons"><button class="btn btn-primary">立即检测</button><button class="btn btn-secondary">了解更多</button></div></section>
-    <footer>OpenClaw 中国社区 · 场景实验室 · 生物医药场景</footer>
+        
+        <div class="demo-section">
+            <h2>💬 使用示例</h2>
+            <div class="chat-demo">
+                <div class="chat-line chat-user">解读我的基因检测报告</div>
+                <div class="chat-line chat-ai">基因分析结果：<br><br>健康风险：<br>• 较低心血管疾病风险 ✓<br>• 乳糖耐受可能性高 ✓<br><br>营养建议：<br>• 建议补充维生素 D<br>• 蛋白摄入建议：80g/天</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="index-spa.html" class="back-btn" style="padding: 14px 35px; font-size: 15px;">🚀 立即体验</a>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="index-spa.html">首页</a>
+            <a href="index-spa.html#scenes">场景实验室</a>
+            <a href="https://docs.openclaw.ai">文档中心</a>
+        </div>
+        <div style="opacity: 0.4; font-size: 13px;">© 2026 OpenClaw 中国社区</div>
+    </footer>
 </body>
 </html>

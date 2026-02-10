@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 中国社区</title>
+    <style>
+        /* 基础样式 */
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #00f0ff;
+            --green: #00ff88;
+            --gold: #ffd700;
+            --dark: #0a0a0f;
+            --light: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        .bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at 20% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(0, 240, 255, 0.1) 0%, transparent 50%);
+        }
+        
+        /* 导航栏 */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            padding: 15px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+        }
+        .logo {
+            font-size: 22px; font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links a {
+            color: var(--light); text-decoration: none;
+            font-size: 14px; opacity: 0.8; transition: 0.3s;
+            cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active { opacity: 1; color: var(--accent); }
+        
+        /* 角色切换器 */
+        .role-switcher {
+            position: relative;
+        }
+        .role-btn {
+            padding: 8px 20px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 50px;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .role-btn:hover {
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .role-dropdown {
+            display: none;
+            position: absolute; top: 100%; right: 0;
+            margin-top: 10px;
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 15px;
+            padding: 10px;
+            min-width: 200px;
+            backdrop-filter: blur(20px);
+        }
+        .role-dropdown.show { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .role-option {
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .role-option:hover { background: rgba(0, 240, 255, 0.1); }
+        .role-option.active { background: rgba(0, 240, 255, 0.15); }
+        .role-icon { font-size: 20px; }
+        .role-name { font-weight: 600; margin-bottom: 2px; }
+        .role-desc { font-size: 12px; opacity: 0.6; }
+        
+        /* 页面容器 */
+        .page-container {
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+        .page {
+            display: none;
+            animation: fadeInPage 0.5s ease;
+        }
+        .page.active { display: block; }
+        @keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: calc(100vh - 80px);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+        }
+        .hero-badge {
+            padding: 10px 25px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 50px;
+            font-size: 14px; color: var(--accent);
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.4); }
+        }
+        .hero h1 {
+            font-size: 56px; font-weight: 800; margin-bottom: 20px; line-height: 1.2;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 18px; opacity: 0.8; max-width: 600px; margin-bottom: 40px;
+        }
+        
+        /* 按钮 */
+        .btn {
+            padding: 14px 35px;
+            border-radius: 50px; font-size: 15px; font-weight: 600;
+            text-decoration: none; transition: 0.3s; cursor: pointer; border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--light);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3); }
+        .btn-secondary {
+            background: transparent; border: 2px solid rgba(255, 255, 255, 0.3); color: var(--light);
+            margin-left: 15px;
+        }
+        .btn-secondary:hover { border-color: var(--primary); background: rgba(0, 240, 255, 0.1); }
+        
+        /* 统计数据 */
+        .stats { display: flex; gap: 60px; margin-top: 60px; }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-size: 42px; font-weight: bold;
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-label { font-size: 14px; opacity: 0.6; margin-top: 5px; }
+        
+        /* 场景卡片 */
+        .section-title {
+            text-align: center; margin-bottom: 50px;
+        }
+        .section-title h2 { font-size: 36px; margin-bottom: 15px; }
+        .section-title p { opacity: 0.7; }
+        .scenes { padding: 100px 50px; }
+        .scenes-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; max-width: 1400px; margin: 0 auto;
+        }
+        .scene-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 30px;
+            cursor: pointer; transition: 0.3s;
+            text-decoration: none; color: inherit;
+            display: block;
+        }
+        .scene-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 240, 255, 0.3);
+            background: rgba(0, 240, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .scene-icon { font-size: 40px; margin-bottom: 15px; }
+        .scene-card h3 { font-size: 20px; margin-bottom: 10px; }
+        .scene-card p { font-size: 14px; opacity: 0.7; margin-bottom: 15px; }
+        .scene-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tag {
+            padding: 4px 12px; border-radius: 20px; font-size: 12px;
+            background: rgba(0, 240, 255, 0.1); color: var(--accent);
+        }
+        .tag.ready { background: rgba(0, 255, 136, 0.1); color: var(--green); }
+        
+        /* 招聘/资讯区域 */
+        .recruitment, .news-section { padding: 100px 50px; }
+        .jobs-grid, .news-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px; max-width: 1200px; margin: 0 auto;
+        }
+        .job-card, .news-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px; padding: 25px;
+            transition: 0.3s; cursor: pointer;
+        }
+        .job-card:hover, .news-card:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            background: rgba(0, 240, 255, 0.05);
+        }
+        .job-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .job-title { font-weight: 600; }
+        .job-salary { color: var(--gold); }
+        .job-company { opacity: 0.7; font-size: 14px; margin-bottom: 15px; }
+        .job-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .job-tag {
+            padding: 4px 10px; border-radius: 5px;
+            font-size: 12px; background: rgba(255, 255, 255, 0.1);
+        }
+        .job-footer {
+            display: flex; justify-content: space-between; margin-top: 15px;
+            font-size: 13px; opacity: 0.6;
+        }
+        .news-category {
+            display: inline-block; padding: 3px 10px;
+            border-radius: 5px; font-size: 12px;
+            background: rgba(255, 0, 110, 0.2); color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+        .news-title { font-size: 16px; margin-bottom: 10px; line-height: 1.5; }
+        .news-meta { display: flex; gap: 15px; font-size: 13px; opacity: 0.6; }
+        
+        /* Footer */
+        footer {
+            padding: 50px; text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
+        .footer-links a { color: var(--light); text-decoration: none; opacity: 0.6; transition: 0.3s; }
+        .footer-links a:hover { opacity: 1; color: var(--accent); }
+        .footer-copy { opacity: 0.4; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    
+    <!-- 统一导航栏 -->
+    <nav>
+        <div class="logo" onclick="router.navigate('home')">OpenClaw 中国</div>
+        <ul class="nav-links">
+            <li><a onclick="router.navigate('home')" class="active" data-page="home">首页</a></li>
+            <li><a onclick="router.navigate('scenes')" data-page="scenes">场景实验室</a></li>
+            <li><a onclick="router.navigate('jobs')" data-page="jobs">大咖招聘</a></li>
+            <li><a onclick="router.navigate('news')" data-page="news">实时资讯</a></li>
+        </ul>
+        
+        <!-- 角色切换器 -->
+        <div class="role-switcher">
+            <button class="role-btn" onclick="toggleRoleDropdown()">
+                🔮 当前角色: <span id="currentRole">探索者</span>
+            </button>
+            <div class="role-dropdown" id="roleDropdown">
+                <div class="role-option active" onclick="switchRole('explorer', '🔮', '探索者', '发现 AI 的无限可能')">
+                    <span class="role-icon">🔮</span>
+                    <div><div class="role-name">探索者</div><div class="role-desc">发现 AI 的无限可能</div></div>
+                </div>
+                <div class="role-option" onclick="switchRole('developer', '⚡', '开发者', '构建下一代 AI 应用')">
+                    <span class="role-icon">⚡</span>
+                    <div><div class="role-name">开发者</div><div class="role-desc">构建下一代 AI 应用</div></div>
+                </div>
+                <div class="role-option" onclick="switchRole('researcher', '🔬', '研究者', '探索 AI 前沿科技')">
+                    <span class="role-icon">🔬</span>
+                    <div><div class="role-name">研究者</div><div class="role-desc">探索 AI 前沿科技</div></div>
+                </div>
+                <div class="role-option" onclick="switchRole('entrepreneur', '🚀', '企业家', 'AI 赋能商业创新')">
+                    <span class="role-icon">🚀</span>
+                    <div><div class="role-name">企业家</div><div class="role-desc">AI 赋能商业创新</div></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- SPA 页面容器 -->
+    <div class="page-container">
+        
+        <!-- 首页 -->
+        <div class="page active" id="page-home">
+            <section class="hero">
+                <div class="hero-badge">🚀 OpenClaw v4.0 已发布</div>
+                <h1>打开 <span>AI</span> 与未来的窗户</h1>
+                <p>中国领先的 AI 助手社区，6 大场景 × 18 个案例，助力你成为 AI 原住民</p>
+                <div>
+                    <button class="btn btn-primary" onclick="router.navigate('scenes')">🚀 立即体验</button>
+                    <button class="btn btn-secondary" onclick="router.navigate('jobs')">💼 查看职位</button>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">50K+</div>
+                        <div class="stat-label">活跃用户</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">开源项目</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">场景案例</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 首页场景预览 -->
+            <section class="scenes">
+                <div class="section-title">
+                    <h2>🎯 核心场景</h2>
+                    <p>覆盖工作、生活、学习、娱乐的全方位 AI 解决方案</p>
+                </div>
+                <div class="scenes-grid">
+                    <a href="smart-schedule.html" class="scene-card">
+                        <div class="scene-icon">📅</div>
+                        <h3>智能日程</h3>
+                        <p>AI 驱动的日程管理，效率提升 300%</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="smart-writing.html" class="scene-card">
+                        <div class="scene-icon">✍️</div>
+                        <h3>AI 写作</h3>
+                        <p>文案、论文、邮件一键生成</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="genomics.html" class="scene-card">
+                        <div class="scene-icon">🧬</div>
+                        <h3>基因分析</h3>
+                        <p>AI 辅助基因解读与预测</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="smart-home.html" class="scene-card">
+                        <div class="scene-icon">🏡</div>
+                        <h3>智能家居</h3>
+                        <p>AI 驱动的智慧生活</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 场景实验室 -->
+        <div class="page" id="page-scenes">
+            <section class="scenes" style="padding-top: 50px;">
+                <div class="section-title">
+                    <h2>🔬 场景实验室</h2>
+                    <p>6 大场景 × 18 个案例，亲身体验 AI 的力量</p>
+                </div>
+                <div class="scenes-grid">
+                    <a href="smart-schedule.html" class="scene-card">
+                        <div class="scene-icon">📅</div>
+                        <h3>生活场景</h3>
+                        <p>智能日程 · AI 写作 · 旅行规划</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span><span class="tag">效率提升 300%</span></div>
+                    </a>
+                    <a href="smart-investment.html" class="scene-card">
+                        <div class="scene-icon">📈</div>
+                        <h3>投资场景</h3>
+                        <p>智能投研 · 风险分析 · 资产配置</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="quality-inspection.html" class="scene-card">
+                        <div class="scene-icon">🔍</div>
+                        <h3>质量场景</h3>
+                        <p>智能质检 · 缺陷检测</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="medical-diagnosis.html" class="scene-card">
+                        <div class="scene-icon">🩺</div>
+                        <h3>医疗场景</h3>
+                        <p>辅助诊断 · 病理分析</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="smart-home.html" class="scene-card">
+                        <div class="scene-icon">🏡</div>
+                        <h3>家庭场景</h3>
+                        <p>智能家居 · 家庭财务 · 育儿助手</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="genomics.html" class="scene-card">
+                        <div class="scene-icon">🧬</div>
+                        <h3>生物医药</h3>
+                        <p>基因分析 · 蛋白质预测</p>
+                        <div class="scene-tags"><span class="tag ready">✓ 已上线</span></div>
+                    </a>
+                    <a href="all-cases.html" class="scene-card">
+                        <div class="scene-icon">📚</div>
+                        <h3>全部案例</h3>
+                        <p>查看所有 18 个场景案例</p>
+                        <div class="scene-tags"><span class="tag">📋 18 个案例</span></div>
+                    </a>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 大咖招聘 -->
+        <div class="page" id="page-jobs">
+            <section class="recruitment" style="padding-top: 50px;">
+                <div class="section-title">
+                    <h2>💼 大咖喊你来招聘</h2>
+                    <p>全球 50,000+ AI 职位 · 薪资透明 · 内推机会</p>
+                </div>
+                <div class="jobs-grid">
+                    <div class="job-card">
+                        <div class="job-header"><div class="job-title">Senior ML Engineer</div><div class="job-salary">$200K-300K</div></div>
+                        <div class="job-company">🏢 OpenAI · 旧金山</div>
+                        <div class="job-tags"><span class="job-tag">PyTorch</span><span class="job-tag">Python</span></div>
+                        <div class="job-footer"><span>⭐ 98% 匹配</span><span>🕐 2小时前</span></div>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-header"><div class="job-title">AI 算法工程师</div><div class="job-salary">¥80K-150K/月</div></div>
+                        <div class="job-company">🏢 字节跳动 · 北京</div>
+                        <div class="job-tags"><span class="job-tag">NLP</span><span class="job-tag">大模型</span></div>
+                        <div class="job-footer"><span>⭐ 95% 匹配</span><span>🕐 5小时前</span></div>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-header"><div class="job-title">Data Scientist</div><div class="job-salary">$150K-250K</div></div>
+                        <div class="job-company">🏢 Google · 纽约</div>
+                        <div class="job-tags"><span class="job-tag">TensorFlow</span><span class="job-tag">SQL</span></div>
+                        <div class="job-footer"><span>⭐ 92% 匹配</span><span>🕐 1天前</span></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- 实时资讯 -->
+        <div class="page" id="page-news">
+            <section class="news-section" style="padding-top: 50px;">
+                <div class="section-title">
+                    <h2>📡 全球 AI 实时资讯</h2>
+                    <p>技术演进 · 投资融资 · 企业应用</p>
+                </div>
+                <div class="news-grid">
+                    <div class="news-card">
+                        <span class="news-category">🔥 热门</span>
+                        <div class="news-title">OpenAI 宣布 GPT-5 即将发布，性能提升 10 倍</div>
+                        <div class="news-meta"><span>TechCrunch</span><span>2小时前</span></div>
+                    </div>
+                    <div class="news-card">
+                        <span class="news-category">💰 投资</span>
+                        <div class="news-title">AI 药物发现公司融资 5 亿美元</div>
+                        <div class="news-meta"><span>Crunchbase</span><span>5小时前</span></div>
+                    </div>
+                    <div class="news-card">
+                        <span class="news-category">📈 技术</span>
+                        <div class="news-title">Anthropic 发布 Claude 3.5，支持 100 万 token</div>
+                        <div class="news-meta"><span>Anthropic Blog</span><span>8小时前</span></div>
+                    </div>
+                    <div class="news-card">
+                        <span class="news-category">🏢 企业</span>
+                        <div class="news-title">微软 Azure AI 全面升级</div>
+                        <div class="news-meta"><span>Microsoft</span><span>12小时前</span></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#" onclick="router.navigate('home')">首页</a>
+            <a href="#" onclick="router.navigate('scenes')">场景实验室</a>
+            <a href="#" onclick="router.navigate('jobs')">大咖招聘</a>
+            <a href="#" onclick="router.navigate('news')">实时资讯</a>
+            <a href="https://docs.openclaw.ai">文档中心</a>
+            <a href="https://discord.com/invite/clawd">全球社区</a>
+        </div>
+        <div class="footer-copy">© 2026 OpenClaw 中国社区 · Made with ❤️ in China</div>
+    </footer>
+    
+    <script>
+        // ==================== 路由系统 ====================
+        const router = {
+            navigate: function(pageName) {
+                // 更新页面显示
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('page-' + pageName).classList.add('active');
+                
+                // 更新导航高亮
+                document.querySelectorAll('.nav-links a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.dataset.page === pageName) a.classList.add('active');
+                });
+                
+                // 平滑滚动到顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // 更新 URL
+                history.pushState({}, '', '#' + pageName);
+            },
+            
+            init: function() {
+                // 处理浏览器前进后退
+                window.addEventListener('popstate', () => {
+                    const hash = window.location.hash.slice(1) || 'home';
+                    this.navigate(hash);
+                });
+                
+                // 初始路由
+                const hash = window.location.hash.slice(1) || 'home';
+                this.navigate(hash);
+            }
+        };
+        
+        // ==================== 角色切换系统 ====================
+        function toggleRoleDropdown() {
+            const dropdown = document.getElementById('roleDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        function switchRole(roleId, icon, name, desc) {
+            // 更新按钮显示
+            document.getElementById('currentRole').textContent = name;
+            
+            // 更新下拉菜单状态
+            document.querySelectorAll('.role-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // 关闭下拉菜单
+            document.getElementById('roleDropdown').classList.remove('show');
+            
+            // 保存角色选择
+            localStorage.setItem('openclaw_role', roleId);
+            localStorage.setItem('openclaw_role_name', name);
+            
+            // 提示用户
+            console.log('角色切换为: ' + name);
+        }
+        
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化路由
+            router.init();
+            
+            // 恢复角色选择
+            const savedRole = localStorage.getItem('openclaw_role_name');
+            if (savedRole) {
+                document.getElementById('currentRole').textContent = savedRole;
+            }
+            
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.role-switcher')) {
+                    document.getElementById('roleDropdown').classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

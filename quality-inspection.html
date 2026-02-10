@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能质量检测 - OpenClaw 场景实验室</title>
+    <title>质量检测 - OpenClaw 场景实验室</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --primary: #667eea;
             --secondary: #764ba2;
             --accent: #00f0ff;
-            --gold: #ffd700;
             --green: #00ff88;
-            --red: #ff6b6b;
+            --gold: #ffd700;
             --dark: #0a0a0f;
             --light: #ffffff;
         }
@@ -22,15 +21,12 @@
             color: var(--light);
             overflow-x: hidden;
         }
-        
         .bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background:
-                radial-gradient(ellipse at 20% 20%, rgba(0, 240, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%);
+            background: radial-gradient(ellipse at 20% 20%, #00ff88_OPACITY 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%);
         }
-        
         nav {
             position: fixed; top: 0; width: 100%;
             padding: 15px 50px;
@@ -38,19 +34,18 @@
             background: rgba(10, 10, 15, 0.95);
             backdrop-filter: blur(20px);
             z-index: 1000;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .logo { font-size: 20px; font-weight: bold; color: var(--accent); }
-        
+        .logo { font-size: 20px; font-weight: bold; cursor: pointer; }
         .back-btn {
             padding: 8px 20px;
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 50px; color: var(--accent);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px; color: var(--light);
             cursor: pointer; text-decoration: none; font-size: 14px;
+            transition: 0.3s;
         }
-        
+        .back-btn:hover { background: rgba(255, 255, 255, 0.2); }
         .hero {
             min-height: 50vh;
             display: flex; flex-direction: column;
@@ -58,400 +53,115 @@
             text-align: center;
             padding: 120px 20px 60px;
         }
-        
-        .scene-icon {
-            width: 100px; height: 100px;
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(102, 126, 234, 0.2));
-            border-radius: 25px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 50px; margin-bottom: 30px;
-            animation: float 3s ease-in-out infinite;
+        .hero-badge {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 25px;
         }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .hero h1 {
-            font-size: 48px; font-weight: 800; margin-bottom: 15px;
-            background: linear-gradient(135deg, var(--accent), var(--primary));
+        .hero h1 { font-size: 48px; margin-bottom: 15px; }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
+        .hero p { font-size: 18px; opacity: 0.8; max-width: 600px; }
         
-        .hero p { font-size: 18px; opacity: 0.8; max-width: 700px; line-height: 1.8; }
-        
-        .metrics {
-            display: flex; gap: 40px; margin-top: 40px;
-        }
-        
-        .metric {
-            text-align: center;
-            padding: 20px 30px;
-            background: rgba(0, 240, 255, 0.05);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 16px;
-        }
-        
-        .metric-value {
-            font-size: 36px; font-weight: bold;
-            color: var(--accent);
-        }
-        
-        .metric-label { font-size: 13px; opacity: 0.7; margin-top: 5px; }
-        
-        /* 流程图 */
-        .flowchart {
-            padding: 80px 50px;
-            max-width: 1200px; margin: 0 auto;
-        }
-        
-        .section-title {
-            text-align: center; margin-bottom: 50px;
-        }
-        
-        .section-title h2 { font-size: 36px; margin-bottom: 15px; }
-        
-        .flow-steps {
-            display: flex; flex-direction: column; gap: 0;
-        }
-        
-        .flow-step {
-            display: flex; align-items: flex-start; gap: 30px;
-            padding: 30px;
-            position: relative;
-        }
-        
-        .step-number {
-            width: 60px; height: 60px;
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; font-weight: bold;
-            flex-shrink: 0; z-index: 2;
-        }
-        
-        .step-content {
-            flex: 1;
+        .content { padding: 50px; max-width: 1200px; margin: 0 auto; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .feature-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px; padding: 25px;
+            border-radius: 15px; padding: 30px;
+            transition: 0.3s;
         }
-        
-        .step-title {
-            font-size: 20px; font-weight: 600;
-            color: var(--accent); margin-bottom: 10px;
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
         }
+        .feature-icon { font-size: 36px; margin-bottom: 15px; }
+        .feature-card h3 { margin-bottom: 10px; }
+        .feature-card p { opacity: 0.7; font-size: 14px; line-height: 1.6; }
         
-        .step-desc { font-size: 15px; opacity: 0.8; line-height: 1.7; }
-        
-        .step-demo {
-            margin-top: 20px;
-            padding: 20px;
+        .demo-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; padding: 40px; margin-bottom: 50px;
+        }
+        .demo-section h2 { margin-bottom: 20px; }
+        .chat-demo {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            display: flex; align-items: center; gap: 20px;
+            border-radius: 15px; padding: 20px;
+            font-family: monospace;
         }
-        
-        .demo-icon {
-            width: 60px; height: 60px;
-            background: rgba(0, 240, 255, 0.1);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 30px;
-        }
-        
-        .demo-data { flex: 1; }
-        
-        .demo-label { font-size: 12px; opacity: 0.6; margin-bottom: 5px; }
-        
-        .demo-value { font-size: 18px; font-weight: 600; }
-        
-        .demo-value.success { color: var(--green); }
-        .demo-value.warning { color: var(--gold); }
-        .demo-value.danger { color: var(--red); }
-        
-        .flow-arrow {
-            text-align: center; font-size: 30px;
-            color: var(--accent); opacity: 0.5;
-            padding: 10px;
-        }
-        
-        /* 数据对比 */
-        .comparison {
-            padding: 80px 50px;
-            background: rgba(0, 240, 255, 0.02);
-        }
-        
-        .comparison-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
-            max-width: 1000px; margin: 0 auto;
-        }
-        
-        .compare-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px; padding: 40px;
-        }
-        
-        .compare-card.before { border-color: var(--red); }
-        .compare-card.after { border-color: var(--green); }
-        
-        .compare-title { font-size: 24px; margin-bottom: 30px; }
-        
-        .compare-card.before .compare-title { color: var(--red); }
-        .compare-card.after .compare-title { color: var(--green); }
-        
-        .compare-item {
-            display: flex; justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .compare-item:last-child { border-bottom: none; }
-        
-        .compare-label { opacity: 0.7; }
-        
-        .compare-value { font-weight: 600; }
-        
-        /* CTA */
-        .cta {
-            padding: 100px 50px;
-            text-align: center;
-        }
-        
-        .cta h2 { font-size: 40px; margin-bottom: 20px; }
-        
-        .cta p { font-size: 18px; opacity: 0.8; margin-bottom: 40px; }
-        
-        .cta-buttons { display: flex; gap: 20px; justify-content: center; }
-        
-        .btn {
-            padding: 16px 40px;
-            border-radius: 50px; font-size: 16px; font-weight: 600;
-            text-decoration: none; transition: 0.3s; cursor: pointer; border: none;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-            color: var(--dark);
-        }
-        
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0, 240, 255, 0.3); }
-        
-        .btn-secondary {
-            background: transparent; border: 2px solid rgba(255, 255, 255, 0.3); color: var(--light);
-        }
+        .chat-line { margin-bottom: 10px; padding: 10px; border-radius: 8px; }
+        .chat-user { background: rgba(0, 240, 255, 0.1); margin-left: 20px; }
+        .chat-ai { background: rgba(255, 255, 255, 0.1); margin-right: 20px; }
         
         footer {
-            padding: 40px 50px; text-align: center;
+            padding: 50px; text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0.5; font-size: 14px;
         }
-        
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .metrics { flex-wrap: wrap; gap: 20px; }
-            .comparison-grid { grid-template-columns: 1fr; }
-            .cta-buttons { flex-direction: column; }
-        }
+        .footer-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
+        .footer-links a { color: var(--light); text-decoration: none; opacity: 0.6; transition: 0.3s; }
+        .footer-links a:hover { opacity: 1; }
     </style>
 </head>
 <body>
     <div class="bg"></div>
     
     <nav>
-        <div class="logo">🔬 场景实验室</div>
-        <a href="index.html" class="back-btn">← 返回首页</a>
+        <div class="logo" onclick="window.location.href='index-spa.html'" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">← OpenClaw</div>
+        <a href="index-spa.html" class="back-btn">返回首页</a>
     </nav>
     
     <section class="hero">
-        <div class="scene-icon">🏭</div>
-        <h1>智能质量检测</h1>
-        <p>基于深度视觉的工业质量检测系统，实时识别产品缺陷，准确率高达 99.9%，大幅降低人工成本，提升生产效率。</p>
-        
-        <div class="metrics">
-            <div class="metric">
-                <div class="metric-value">1000%↑</div>
-                <div class="metric-label">检测效率</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">99.9%</div>
-                <div class="metric-label">检测准确率</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">70%↓</div>
-                <div class="metric-label">成本降低</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value">24/7</div>
-                <div class="metric-label">全天候检测</div>
-            </div>
-        </div>
+        <div class="hero-badge">🔍 质量检测</div>
+        <h1>AI 驱动的 <span>质量检测</span></h1>
+        <p>AI 驱动的智能质检系统</p>
     </section>
     
-    <section class="flowchart">
-        <div class="section-title">
-            <h2>工作流程</h2>
-            <p>从图像采集到缺陷识别，全自动化处理</p>
+    <div class="content">
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>智能分析</h3>
+                <p>AI 深度分析，提供专业洞察和决策支持</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>快速响应</h3>
+                <p>毫秒级响应，即时获取所需信息</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>精准推荐</h3>
+                <p>个性化推荐，匹配你的独特需求</p>
+            </div>
         </div>
         
-        <div class="flow-steps">
-            <div class="flow-step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <div class="step-title">📷 图像采集</div>
-                    <div class="step-desc">高速工业相机实时采集产品图像，支持多种光照条件和拍摄角度，确保图像质量。</div>
-                    <div class="step-demo">
-                        <div class="demo-icon">📸</div>
-                        <div class="demo-data">
-                            <div class="demo-label">采集速度</div>
-                            <div class="demo-value">1000 张/秒</div>
-                        </div>
-                    </div>
-                </div>
+        <div class="demo-section">
+            <h2>💬 使用示例</h2>
+            <div class="chat-demo">
+                <div class="chat-line chat-user">检测这批产品的缺陷</div>
+                <div class="chat-line chat-ai">质检完成！<br><br>检测数量：1000件<br>合格：987件<br>异常：13件<br><br>异常类型：<br>• 划痕：8件<br>• 色差：5件<br><br>建议：调整第3道工序参数</div>
             </div>
-            
-            <div class="flow-arrow">↓</div>
-            
-            <div class="flow-step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <div class="step-title">🤖 AI 图像识别</div>
-                    <div class="step-desc">深度学习模型对图像进行实时分析，识别划痕、凹陷、污点、色差等各类缺陷。</div>
-                    <div class="step-demo">
-                        <div class="demo-icon">🧠</div>
-                        <div class="demo-data">
-                            <div class="demo-label">分析进度</div>
-                            <div class="demo-value success">✓ 已检测 12,847 件产品</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flow-arrow">↓</div>
-            
-            <div class="flow-step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <div class="step-title">⚠️ 缺陷标注</div>
-                    <div class="step-desc">自动标注缺陷位置、类型和严重程度，生成可视化报告，支持实时报警。</div>
-                    <div class="step-demo">
-                        <div class="demo-icon">🎯</div>
-                        <div class="demo-data">
-                            <div class="demo-label">本次检测</div>
-                            <div class="demo-value warning">发现 3 处缺陷</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flow-arrow">↓</div>
-            
-            <div class="flow-step">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <div class="step-title">📊 统计分析</div>
-                    <div class="step-desc">汇总缺陷数据，生成统计报表，分析缺陷分布规律，为生产工艺优化提供数据支持。</div>
-                    <div class="step-demo">
-                        <div class="demo-icon">📈</div>
-                        <div class="demo-data">
-                            <div class="demo-label">今日统计</div>
-                            <div class="demo-value">合格率 98.5% | 缺陷率 1.5%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flow-arrow">↓</div>
-            
-            <div class="flow-step">
-                <div class="step-number">5</div>
-                <div class="step-content">
-                    <div class="step-title">🔄 反馈优化</div>
-                    <div class="step-desc">将检测结果反馈至生产系统，自动剔除不良品，同时分析原因，优化生产工艺。</div>
-                    <div class="step-demo">
-                        <div class="demo-icon">✅</div>
-                        <div class="demo-data">
-                            <div class="demo-label">处理结果</div>
-                            <div class="demo-value success">✓ 3 件不良品已剔除</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section class="comparison">
-        <div class="section-title">
-            <h2>效果对比</h2>
-            <p>智能检测 vs 传统人工检测</p>
         </div>
         
-        <div class="comparison-grid">
-            <div class="compare-card before">
-                <div class="compare-title">❌ 传统人工检测</div>
-                
-                <div class="compare-item">
-                    <span class="compare-label">检测速度</span>
-                    <span class="compare-value">20-30 件/分钟</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">准确率</span>
-                    <span class="compare-value" style="color: var(--red);">85-90%</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">漏检率</span>
-                    <span class="compare-value" style="color: var(--red);">10-15%</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">人力成本</span>
-                    <span class="compare-value">3-5 人/班</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">工作时长</span>
-                    <span class="compare-value">8 小时/天</span>
-                </div>
-            </div>
-            
-            <div class="compare-card after">
-                <div class="compare-title">✅ AI 智能检测</div>
-                
-                <div class="compare-item">
-                    <span class="compare-label">检测速度</span>
-                    <span class="compare-value" style="color: var(--green);">1000+ 件/分钟</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">准确率</span>
-                    <span class="compare-value" style="color: var(--green);">99.9%</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">漏检率</span>
-                    <span class="compare-value" style="color: var(--green);">0.1% 以下</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">人力成本</span>
-                    <span class="compare-value" style="color: var(--green);">1 人/厂</span>
-                </div>
-                <div class="compare-item">
-                    <span class="compare-label">工作时长</span>
-                    <span class="compare-value" style="color: var(--green);">24 小时/天</span>
-                </div>
-            </div>
+        <div style="text-align: center;">
+            <a href="index-spa.html" class="back-btn" style="padding: 14px 35px; font-size: 15px;">🚀 立即体验</a>
         </div>
-    </section>
-    
-    <section class="cta">
-        <h2>部署智能质检系统</h2>
-        <p>提升产品质量，降低运营成本</p>
-        <div class="cta-buttons">
-            <button class="btn btn-primary">免费咨询</button>
-            <button class="btn btn-secondary">预约演示</button>
-        </div>
-    </section>
+    </div>
     
     <footer>
-        OpenClaw 中国社区 · 场景实验室 · 工业场景
+        <div class="footer-links">
+            <a href="index-spa.html">首页</a>
+            <a href="index-spa.html#scenes">场景实验室</a>
+            <a href="https://docs.openclaw.ai">文档中心</a>
+        </div>
+        <div style="opacity: 0.4; font-size: 13px;">© 2026 OpenClaw 中国社区</div>
     </footer>
 </body>
 </html>
