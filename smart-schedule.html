@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能日程管理 - OpenClaw 场景实验室</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #00f0ff;
+            --green: #00ff88;
+            --gold: #ffd700;
+            --dark: #0a0a0f;
+            --light: #ffffff;
+        }
+        body {
+            font-family: 'SF Pro Display', -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        .bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%);
+        }
+        nav {
+            position: fixed; top: 0; width: 100%;
+            padding: 15px 50px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        .logo { font-size: 20px; font-weight: bold; color: var(--green); }
+        .back-btn {
+            padding: 8px 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 50px; color: var(--green);
+            cursor: pointer; text-decoration: none; font-size: 14px;
+        }
+        .hero {
+            min-height: 50vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+        }
+        .scene-icon {
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(102, 126, 234, 0.2));
+            border-radius: 25px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 50px; margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .hero h1 {
+            font-size: 48px; font-weight: 800; margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--green), var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 18px; opacity: 0.8; max-width: 700px; line-height: 1.8; }
+        .metrics { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; justify-content: center; }
+        .metric {
+            text-align: center;
+            padding: 20px 30px;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 16px;
+        }
+        .metric-value { font-size: 36px; font-weight: bold; color: var(--green); }
+        .metric-label { font-size: 13px; opacity: 0.7; margin-top: 5px; }
+        .flowchart { padding: 80px 50px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; margin-bottom: 50px; }
+        .section-title h2 { font-size: 36px; margin-bottom: 15px; }
+        .flow-steps { display: flex; flex-direction: column; gap: 0; }
+        .flow-step { display: flex; align-items: flex-start; gap: 30px; padding: 30px; position: relative; }
+        .step-number {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--green), var(--primary));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: bold;
+            flex-shrink: 0; z-index: 2;
+        }
+        .step-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; padding: 25px;
+        }
+        .step-title { font-size: 20px; font-weight: 600; color: var(--green); margin-bottom: 10px; }
+        .step-desc { font-size: 15px; opacity: 0.8; line-height: 1.7; }
+        .step-demo {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+        .demo-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .demo-row:last-child { border-bottom: none; }
+        .demo-label { opacity: 0.7; }
+        .demo-value { font-weight: 600; color: var(--green); }
+        .demo-value.warning { color: var(--gold); }
+        .flow-arrow { text-align: center; font-size: 30px; color: var(--green); opacity: 0.5; padding: 10px; }
+        .comparison { padding: 80px 50px; background: rgba(0, 255, 136, 0.02); }
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1000px; margin: 0 auto; }
+        .compare-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 40px;
+        }
+        .compare-card.before { border-color: #ff6b6b; }
+        .compare-card.after { border-color: var(--green); }
+        .compare-title { font-size: 24px; margin-bottom: 30px; }
+        .compare-card.before .compare-title { color: #ff6b6b; }
+        .compare-card.after .compare-title { color: var(--green); }
+        .compare-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .compare-item:last-child { border-bottom: none; }
+        .compare-label { opacity: 0.7; }
+        .compare-value { font-weight: 600; }
+        .cta { padding: 100px 50px; text-align: center; }
+        .cta h2 { font-size: 40px; margin-bottom: 20px; }
+        .cta p { font-size: 18px; opacity: 0.8; margin-bottom: 40px; }
+        .cta-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            padding: 16px 40px;
+            border-radius: 50px; font-size: 16px; font-weight: 600;
+            text-decoration: none; transition: 0.3s; cursor: pointer; border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green), var(--primary));
+            color: var(--dark);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3); }
+        .btn-secondary {
+            background: transparent; border: 2px solid rgba(255, 255, 255, 0.3); color: var(--light);
+        }
+        footer { padding: 40px 50px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); opacity: 0.5; font-size: 14px; }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .metrics { gap: 20px; }
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    <nav>
+        <div class="logo">🔬 场景实验室</div>
+        <a href="index.html" class="back-btn">← 返回首页</a>
+    </nav>
+    <section class="hero">
+        <div class="scene-icon">📅</div>
+        <h1>智能日程管理</h1>
+        <p>AI 帮你自动规划一天的工作和生活，根据优先级、精力状态、时间分布智能安排，让效率提升 300%。</p>
+        <div class="metrics">
+            <div class="metric"><div class="metric-value">300%↑</div><div class="metric-label">效率提升</div></div>
+            <div class="metric"><div class="metric-value">2小时↑</div><div class="metric-label">节省时间</div></div>
+            <div class="metric"><div class="metric-value">90%↑</div><div class="metric-label">任务完成率</div></div>
+            <div class="metric"><div class="metric-value">AI驱动</div><div class="metric-label">自动优化</div></div>
+        </div>
+    </section>
+    <section class="flowchart">
+        <div class="section-title"><h2>工作流程</h2><p>从任务输入到自动排程，全程 AI 驱动</p></div>
+        <div class="flow-steps">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">📥 自然语言输入</div>
+                    <div class="step-desc">用自然语言描述任务，AI 自动解析时间、优先级、截止日期等关键信息。</div>
+                    <div class="step-demo">
+                        <div class="demo-row"><span class="demo-label">输入内容</span><span class="demo-value">"明天下午3点开会讨论项目，周五前完成报告"</span></div>
+                        <div class="demo-row"><span class="demo-label">识别任务</span><span class="demo-value warning">2 个任务已识别</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">🧠 智能分析</div>
+                    <div class="step-desc">分析任务类型、所需精力、预估时长，评估优先级和时间约束。</div>
+                    <div class="step-demo">
+                        <div class="demo-row"><span class="demo-label">任务分析</span><span class="demo-value">会议(2h, 高优先级) + 报告(3h, 紧急)</span></div>
+                        <div class="demo-row"><span class="demo-label">建议时间</span><span class="demo-value">报告安排在上午精力最好时</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">📅 自动排程</div>
+                    <div class="step-desc">基于算法自动安排最优时间窗口，考虑精力曲线、会议间隔、休息时间。</div>
+                    <div class="step-demo">
+                        <div class="demo-row"><span class="demo-label">今日安排</span><span class="demo-value">9:00-12:00 写报告, 14:00-16:00 开会</span></div>
+                        <div class="demo-row"><span class="demo-label">优化建议</span><span class="demo-value">插入15分钟休息，提高专注力</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">⏰ 智能提醒</div>
+                    <div class="step-desc">根据任务进度和突发情况，动态调整提醒策略，确保重要事项不遗漏。</div>
+                    <div class="step-demo">
+                        <div class="demo-row"><span class="demo-label">提醒设置</span><span class="demo-value">提前15分钟提醒 + 5分钟再次提醒</span></div>
+                        <div class="demo-row"><span class="demo-label">状态</span><span class="demo-value">✓ 已激活</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <div class="step-title">🔄 动态调整</div>
+                    <div class="step-desc">当有突发任务时，AI 自动重新排程，找到最优解决方案。</div>
+                    <div class="step-demo">
+                        <div class="demo-row"><span class="demo-label">新任务插入</span><span class="demo-value warning">临时会议 14:00-15:00</span></div>
+                        <div class="demo-row"><span class="demo-label">自动调整</span><span class="demo-value">报告改为 9:00-12:00, 16:00-17:00</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="comparison">
+        <div class="section-title"><h2>效果对比</h2><p>智能排程 vs 传统方式</p></div>
+        <div class="comparison-grid">
+            <div class="compare-card before">
+                <div class="compare-title">❌ 传统日程管理</div>
+                <div class="compare-item"><span class="compare-label">每日规划时间</span><span class="compare-value">30-60 分钟</span></div>
+                <div class="compare-item"><span class="compare-label">任务完成率</span><span class="compare-value" style="color: #ff6b6b;">50-60%</span></div>
+                <div class="compare-item"><span class="compare-label">突发应对</span><span class="compare-value" style="color: #ff6b6b;">打乱全天计划</span></div>
+                <div class="compare-item"><span class="compare-label">精力管理</span><span class="compare-value">无规划</span></div>
+                <div class="compare-item"><span class="compare-label">拖延问题</span><span class="compare-value" style="color: #ff6b6b;">严重</span></div>
+            </div>
+            <div class="compare-card after">
+                <div class="compare-title">✅ AI 智能日程</div>
+                <div class="compare-item"><span class="compare-label">每日规划时间</span><span class="compare-value" style="color: var(--green);">1 分钟</span></div>
+                <div class="compare-item"><span class="compare-label">任务完成率</span><span class="compare-value" style="color: var(--green);">90%+</span></div>
+                <div class="compare-item"><span class="compare-label">突发应对</span><span class="compare-value" style="color: var(--green);">自动重新排程</span></div>
+                <div class="compare-item"><span class="compare-label">精力管理</span><span class="compare-value" style="color: var(--green);">AI 优化分配</span></div>
+                <div class="compare-item"><span class="compare-label">拖延问题</span><span class="compare-value" style="color: var(--green);">降低 80%</span></div>
+            </div>
+        </div>
+    </section>
+    <section class="cta">
+        <h2>开始智能日程管理</h2>
+        <p>让 AI 成为你的时间管理助手</p>
+        <div class="cta-buttons">
+            <button class="btn btn-primary">免费试用</button>
+            <button class="btn btn-secondary">了解更多</button>
+        </div>
+    </section>
+    <footer>OpenClaw 中国社区 · 场景实验室 · 生活场景</footer>
+</body>
+</html>
