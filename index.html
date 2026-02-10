@@ -121,6 +121,8 @@
         .scenes-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px; max-width: 1400px; margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         .scene-card {
             background: rgba(255, 255, 255, 0.03);
@@ -129,6 +131,8 @@
             transition: 0.4s; cursor: pointer;
             text-decoration: none; color: inherit;
             display: block;
+            position: relative;
+            z-index: 1;
         }
         .scene-card:hover {
             transform: translateY(-8px);
