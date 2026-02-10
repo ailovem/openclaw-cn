@@ -106,15 +106,16 @@
             background: rgba(0, 240, 255, 0.05); border-bottom: 1px solid rgba(0, 240, 255, 0.1);
             padding: 12px 50px; z-index: 999;
             display: flex; align-items: center; gap: 30px;
+            overflow: hidden; max-height: 50px;
         }
         .news-label { font-size: 12px; color: var(--accent); white-space: nowrap; }
-        .news-items { display: flex; gap: 40px; overflow: hidden; }
-        .news-item { display: flex; align-items: center; gap: 10px; font-size: 13px; opacity: 0.8; }
+        .news-items { display: flex; gap: 40px; overflow: hidden; max-height: 26px; }
+        .news-item { display: flex; align-items: center; gap: 10px; font-size: 13px; opacity: 0.8; white-space: nowrap; }
         .news-tag {
             padding: 2px 8px; background: rgba(255, 0, 110, 0.2);
             border-radius: 10px; font-size: 10px; color: #ff006e;
         }
-        .scenes { padding: 100px 50px; }
+        .scenes { padding: 100px 50px; position: relative; z-index: 1001; }
         .section-title { text-align: center; margin-bottom: 60px; }
         .section-title h2 { font-size: 40px; margin-bottom: 15px; }
         .section-title p { opacity: 0.7; font-size: 16px; }
