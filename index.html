@@ -12,42 +12,6 @@
         }
     }
     
-    function switchRole(roleId, roleName, element) {
-        // Hide all role sections
-        document.querySelectorAll('.role-sections').forEach(function(section) {
-            if (section) section.classList.remove('active');
-        });
-        
-        // Show selected role section
-        var roleSection = document.getElementById('role-' + roleId);
-        if (roleSection) {
-            roleSection.classList.add('active');
-        }
-        
-        // Update dropdown text
-        var currentRole = document.getElementById('currentRole');
-        if (currentRole) {
-            currentRole.textContent = roleName;
-        }
-        
-        // Hide dropdown
-        var dropdown = document.getElementById('roleDropdown');
-        if (dropdown) {
-            dropdown.style.display = 'none';
-        }
-        
-        // Update active state
-        document.querySelectorAll('.role-item').forEach(function(item) {
-            if (item) item.classList.remove('active');
-        });
-        if (element) {
-            element.classList.add('active');
-        }
-        
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    
     // Close dropdown when clicking outside
     document.addEventListener('click', function(event) {
         var switcher = document.querySelector('.role-switcher');
@@ -189,7 +153,7 @@
             padding: 2px 8px; background: rgba(255, 0, 110, 0.2);
             border-radius: 10px; font-size: 10px; color: #ff006e;
         }
-        .scenes { padding: 100px 50px; position: relative; z-index: 50; background: var(--dark); }
+        .scenes { padding: 100px 50px; position: relative; z-index: 5; background: var(--dark); }
         .section-title { text-align: center; margin-bottom: 60px; }
         .section-title h2 { font-size: 40px; margin-bottom: 15px; }
         .section-title p { opacity: 0.7; font-size: 16px; }
@@ -272,8 +236,6 @@
         }
         .news-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; line-height: 1.5; }
         .news-meta { display: flex; gap: 15px; opacity: 0.5; font-size: 12px; }
-        .role-sections { display: none; position: absolute; top: 0; left: 0; width: 100%; z-index: 100; pointer-events: none; }
-        .role-sections.active { display: block; pointer-events: auto; }
         footer {
             padding: 60px 50px; text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -318,22 +280,22 @@
         <div class="role-switcher" onclick="toggleRoleDropdown()">
             <span>选择角色</span>
             <div class="role-dropdown" id="roleDropdown">
-                <div class="role-item active" onclick="switchRole('default', '首页', this)">
+                <div class="role-item active">
                     <span>首页</span>
                 </div>
-                <div class="role-item" onclick="switchRole('investor', '大佬视角', this)">
+                <div class="role-item">
                     <span>🏛️ 大佬/投资人</span>
                 </div>
-                <div class="role-item" onclick="switchRole('manager', '管理者视角', this)">
+                <div class="role-item">
                     <span>💼 企业管理者</span>
                 </div>
-                <div class="role-item" onclick="switchRole('developer', '开发者视角', this)">
+                <div class="role-item">
                     <span>🛠️ 开发者</span>
                 </div>
-                <div class="role-item" onclick="switchRole('entrepreneur', '一人公司', this)">
+                <div class="role-item">
                     <span>💰 一人公司</span>
                 </div>
-                <div class="role-item" onclick="switchRole('beginner', '小白视角', this)">
+                <div class="role-item">
                     <span>🌱 小白用户</span>
                 </div>
             </div>
@@ -366,87 +328,6 @@
             </div>
         </div>
     </section>
-    <div class="role-sections active" id="role-default"></div>
-    <div class="role-sections" id="role-investor">
-        <section class="hero" style="min-height: 60vh;">
-            <div class="hero-badge">大佬/投资人视角</div>
-            <h1>AI 投资趋势<br><span>与战略洞察</span></h1>
-            <p>全球 AI 生态分析 · 投资热点追踪 · 行业报告解读</p>
-            <div>
-                <button class="btn btn-primary">查看行业报告</button>
-                <button class="btn btn-secondary">投资机会</button>
-            </div>
-            <div class="stats">
-                <div class="stat-item"><div class="stat-number">$500B</div><div class="stat-label">AI 市场估值</div></div>
-                <div class="stat-item"><div class="stat-number">3,200+</div><div class="stat-label">AI 独角兽</div></div>
-                <div class="stat-item"><div class="stat-number">50+</div><div class="stat-label">本月融资</div></div>
-            </div>
-        </section>
-    </div>
-    <div class="role-sections" id="role-manager">
-        <section class="hero" style="min-height: 60vh;">
-            <div class="hero-badge">企业管理者视角</div>
-            <h1>AI 驱动的<br><span>降本增效</span></h1>
-            <p>行业解决方案 · ROI 案例分析 · 数字化转型路径</p>
-            <div>
-                <button class="btn btn-primary">查看解决方案</button>
-                <button class="btn btn-secondary">预约演示</button>
-            </div>
-            <div class="stats">
-                <div class="stat-item"><div class="stat-number">70%</div><div class="stat-label">效率提升</div></div>
-                <div class="stat-item"><div class="stat-number">40%</div><div class="stat-label">成本降低</div></div>
-                <div class="stat-item"><div class="stat-number">200+</div><div class="stat-label">标杆案例</div></div>
-            </div>
-        </section>
-    </div>
-    <div class="role-sections" id="role-developer">
-        <section class="hero" style="min-height: 60vh;">
-            <div class="hero-badge">开发者视角</div>
-            <h1>AI 技术<br><span>与开源生态</span></h1>
-            <p>最新 API 文档 · 开源项目 · 开发者社区</p>
-            <div>
-                <a href="https://docs.openclaw.ai" target="_blank" class="btn btn-primary">查看文档</a>
-                <a href="https://github.com/openclaw" target="_blank" class="btn btn-secondary">GitHub</a>
-            </div>
-            <div class="stats">
-                <div class="stat-item"><div class="stat-number">5,000+</div><div class="stat-label">Stars</div></div>
-                <div class="stat-item"><div class="stat-number">500+</div><div class="stat-label">贡献者</div></div>
-                <div class="stat-item"><div class="stat-number">100+</div><div class="stat-label">Skills</div></div>
-            </div>
-        </section>
-    </div>
-    <div class="role-sections" id="role-entrepreneur">
-        <section class="hero" style="min-height: 60vh;">
-            <div class="hero-badge">一人公司视角</div>
-            <h1>AI 时代的<br><span>超级个体</span></h1>
-            <p>变现路径 · 效率工具 · 成功案例</p>
-            <div>
-                <button class="btn btn-primary">变现案例</button>
-                <button class="btn btn-secondary">效率工具</button>
-            </div>
-            <div class="stats">
-                <div class="stat-item"><div class="stat-number">500%</div><div class="stat-label">效率提升</div></div>
-                <div class="stat-item"><div class="stat-number">50+</div><div class="stat-label">变现案例</div></div>
-                <div class="stat-item"><div class="stat-number">30%</div><div class="stat-label">收入增长</div></div>
-            </div>
-        </section>
-    </div>
-    <div class="role-sections" id="role-beginner">
-        <section class="hero" style="min-height: 60vh;">
-            <div class="hero-badge">小白用户视角</div>
-            <h1>AI 入门<br><span>从这里开始</span></h1>
-            <p>入门教程 · 案例演示 · 常见问题</p>
-            <div>
-                <button class="btn btn-primary">开始学习</button>
-                <button class="btn btn-secondary">观看演示</button>
-            </div>
-            <div class="stats">
-                <div class="stat-item"><div class="stat-number">5min</div><div class="stat-label">快速上手</div></div>
-                <div class="stat-item"><div class="stat-number">100+</div><div class="stat-label">入门教程</div></div>
-                <div class="stat-item"><div class="stat-number">50K+</div><div class="stat-label">用户学会</div></div>
-            </div>
-        </section>
-    </div>
     <section class="scenes" id="scenes">
         <div class="section-title">
             <h2>🔬 OpenClaw 场景实验室</h2>
