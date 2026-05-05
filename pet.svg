@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="cute pet cat">
+  <rect width="512" height="512" fill="#f5fbff"/>
+  <ellipse cx="256" cy="430" rx="150" ry="28" fill="#d9e8f2"/>
+
+  <!-- tail -->
+  <path d="M365 330c50 8 72-23 68-57-4-30-30-45-56-41" fill="none" stroke="#f2a65a" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- body -->
+  <ellipse cx="256" cy="300" rx="120" ry="95" fill="#f7b267"/>
+  <ellipse cx="256" cy="320" rx="80" ry="60" fill="#ffd6a5"/>
+
+  <!-- paws -->
+  <ellipse cx="195" cy="384" rx="36" ry="22" fill="#f7b267"/>
+  <ellipse cx="317" cy="384" rx="36" ry="22" fill="#f7b267"/>
+
+  <!-- head -->
+  <circle cx="256" cy="210" r="98" fill="#f7b267"/>
+
+  <!-- ears -->
+  <path d="M186 145l-42-55-8 68z" fill="#f7b267"/>
+  <path d="M326 145l42-55 8 68z" fill="#f7b267"/>
+  <path d="M183 140l-24-31-5 39z" fill="#ffcad4"/>
+  <path d="M329 140l24-31 5 39z" fill="#ffcad4"/>
+
+  <!-- eyes -->
+  <ellipse cx="220" cy="205" rx="14" ry="18" fill="#2d2a32"/>
+  <ellipse cx="292" cy="205" rx="14" ry="18" fill="#2d2a32"/>
+  <circle cx="225" cy="200" r="4" fill="#ffffff"/>
+  <circle cx="297" cy="200" r="4" fill="#ffffff"/>
+
+  <!-- nose and mouth -->
+  <path d="M256 224l-12 10h24z" fill="#f28482"/>
+  <path d="M256 235c0 12-10 20-22 20" fill="none" stroke="#2d2a32" stroke-width="5" stroke-linecap="round"/>
+  <path d="M256 235c0 12 10 20 22 20" fill="none" stroke="#2d2a32" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- whiskers -->
+  <path d="M170 228h52" stroke="#2d2a32" stroke-width="4" stroke-linecap="round"/>
+  <path d="M168 246h54" stroke="#2d2a32" stroke-width="4" stroke-linecap="round"/>
+  <path d="M290 228h52" stroke="#2d2a32" stroke-width="4" stroke-linecap="round"/>
+  <path d="M290 246h54" stroke="#2d2a32" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- blush -->
+  <ellipse cx="188" cy="238" rx="16" ry="10" fill="#ffb4a2" opacity="0.65"/>
+  <ellipse cx="324" cy="238" rx="16" ry="10" fill="#ffb4a2" opacity="0.65"/>
+</svg>
